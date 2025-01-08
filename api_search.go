@@ -239,7 +239,7 @@ The method returns an object with the following properties:
      - _score: the score of the matched document.
      - _source: the source data of the matched document.
 
-In addition, if profiling is enabled, the response will include an additional array with profiling information attached.
+In addition, if profiling is enabled, the response will include an additional array with profiling information attached. Also, if pagination is enabled, the response will include an additional 'scroll' property with a scroll token to use for pagination
 Here is an example search response:
 
   ```

@@ -41,7 +41,7 @@ paths:
              - _score: the score of the matched document.
              - _source: the source data of the matched document.
 
-        In addition, if profiling is enabled, the response will include an additional array with profiling information attached.
+        In addition, if profiling is enabled, the response will include an additional array with profiling information attached. Also, if pagination is enabled, the response will include an additional 'scroll' property with a scroll token to use for pagination
         Here is an example search response:
 
           ```
@@ -442,7 +442,8 @@ paths:
         name: id
         required: true
         schema:
-          type: number
+          format: int64
+          type: integer
         style: simple
       requestBody:
         content:
@@ -666,9 +667,10 @@ components:
             $ref: '#/components/schemas/queryFilterAlias2'
           type: array
     bulkResponse:
-      additionalProperties: false
       description: Success response for bulk search requests
       example:
+        current_line: 0
+        skipped_lines: 6
         error: error
         items:
         - "{}"
@@ -686,6 +688,12 @@ components:
         error:
           description: Error message describing an error if such occurred
           type: string
+        current_line:
+          description: Number of the row returned in the response
+          type: integer
+        skipped_lines:
+          description: Number of rows skipped in the response
+          type: integer
     deleteDocumentRequest:
       description: |
         Payload for delete request.
@@ -1040,6 +1048,9 @@ components:
         _index:
           description: Name of the document index
           type: string
+        table:
+          description: Name of the document table (alias of index)
+          type: string
         _id:
           description: ID of the document affected by the request operation
           format: int64
@@ -1082,6 +1093,7 @@ components:
               gid: 20
         took: 0
         profile: "{}"
+        scroll: scroll
         warning: "{}"
         timed_out: true
         aggregations: "{}"
@@ -1102,6 +1114,9 @@ components:
           description: "Profile information about the search execution, if profiling\
             \ is enabled"
           type: object
+        scroll:
+          description: Scroll token to be used fo pagination
+          type: string
         warning:
           additionalProperties: false
           description: Warnings encountered during the search operation
@@ -1151,13 +1166,13 @@ components:
     sqlObjResponse:
       type: object
     sqlResponse:
+      anyOf:
+      - $ref: '#/components/schemas/sqlRawResponse'
+      - $ref: '#/components/schemas/sqlObjResponse'
       description: List of responses from executed SQL queries
       example:
       - total: 0
         error: null
-      oneOf:
-      - $ref: '#/components/schemas/sqlRawResponse'
-      - $ref: '#/components/schemas/sqlObjResponse'
     updateDocumentRequest:
       description: Payload for updating a document or multiple documents in an index
       properties:
