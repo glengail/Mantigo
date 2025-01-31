@@ -2,16 +2,19 @@
 
 Сlient for Manticore Search.
 
-❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-go/tree/v1.0.0
+❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-go/tree/v6.0.0
 
-## Requiments
+❗ WARNING: the current version has breaking changes compared to the previous release https://github.com/manticoresoftware/manticoresearch-go/tree/v1.0.0
 
-| Manticore Search  | manticoresearch-go           |     Go        |
-| ----------------- | ---------------------------- | ------------- |
-| dev               | dev                          | >= 1.17.0     |
-| >= 6.3.6          | v2.0.x                       | >= 1.17.0     |
-| >= 6.2.12         | v1.0.0                       | >= 1.17.0     |
+## Compatibility Table
 
+| **manticoresearch-go**    | **Manticore Search**                | **Go**           | **Compatibility**       |
+| --------------------------| ----------------------------------- | -----------------| ------------------------|
+| `dev`                     | `dev` (latest development version)  | 1.17.0 or newer  | ✅ Fully Compatible     |
+| v6.0.0 or newer           | 7.0.0 or newer                      | 1.17.0 or newer  | ✅ Fully Compatible     |
+| v6.0.0 or newer           | 6.2.12 to 7.0.0                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
+| v1.0.0 to v6.0.0          | 6.3.6  or newer                     | 1.17.0 or newer  | ✅ Fully Compatible     |
+| v1.0.0 to v6.0.0          | 6.2.12 to 6.3.6                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
 
 
 ## Installation
