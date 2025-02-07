@@ -2,7 +2,7 @@
 
 Сlient for Manticore Search.
 
-❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-go/tree/v6.0.0
+❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-go/tree/v1.6.0
 
 ❗ WARNING: the current version has breaking changes compared to the previous release https://github.com/manticoresoftware/manticoresearch-go/tree/v1.0.0
 
@@ -11,10 +11,10 @@
 | **manticoresearch-go**    | **Manticore Search**                | **Go**           | **Compatibility**       |
 | --------------------------| ----------------------------------- | -----------------| ------------------------|
 | `dev`                     | `dev` (latest development version)  | 1.17.0 or newer  | ✅ Fully Compatible     |
-| v6.0.0 or newer           | 7.0.0 or newer                      | 1.17.0 or newer  | ✅ Fully Compatible     |
-| v6.0.0 or newer           | 6.2.12 to 7.0.0                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
-| v1.0.0 to v6.0.0          | 6.3.6  or newer                     | 1.17.0 or newer  | ✅ Fully Compatible     |
-| v1.0.0 to v6.0.0          | 6.2.12 to 6.3.6                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
+| v1.6.0 or newer           | 7.0.0 or newer                      | 1.17.0 or newer  | ✅ Fully Compatible     |
+| v1.6.0 or newer           | 6.2.12 to 7.0.0                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
+| v1.0.0 to v1.6.0          | 6.3.6  or newer                     | 1.17.0 or newer  | ✅ Fully Compatible     |
+| v1.0.0 to v1.6.0          | 6.2.12 to 6.3.6                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
 
 
 ## Installation
@@ -36,18 +36,18 @@ package main
 
 import (
 	"context"
-	"fmt:
+	"fmt"
 	Manticoresearch "github.com/manticoresoftware/manticoresearch-go"
 )
 
 func main() {
 
-	# Create an instance of API client
+	// Create an instance of API client
 	configuration := Manticoresearch.NewConfiguration()
 	configuration.Servers[0].URL = "http://localhost:9308"
 	apiClient := Manticoresearch.NewAPIClient(configuration)
 	
-	# Perform insert and search operations
+	// Perform insert and search operations
 	tableName := "products"
 	indexDoc := map[string]interface{} {"title": "Crossbody Bag with Tassel"}
 	indexReq := Manticoresearch.NewInsertDocumentRequest(tableName, indexDoc)
