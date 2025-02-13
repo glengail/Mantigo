@@ -2,9 +2,7 @@
 
 Сlient for Manticore Search.
 
-❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-go/tree/v1.6.0
-
-❗ WARNING: the current version has breaking changes compared to the previous release https://github.com/manticoresoftware/manticoresearch-go/tree/v1.0.0
+❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-go/tree/v1.7.0
 
 ## Compatibility Table
 
@@ -13,7 +11,7 @@
 | `dev`                     | `dev` (latest development version)  | 1.17.0 or newer  | ✅ Fully Compatible     |
 | v1.6.0 or newer           | 7.0.0 or newer                      | 1.17.0 or newer  | ✅ Fully Compatible     |
 | v1.6.0 or newer           | 6.2.12 to 7.0.0                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
-| v1.0.0 to v1.6.0          | 6.3.6  or newer                     | 1.17.0 or newer  | ✅ Fully Compatible     |
+| v1.0.0 to v1.6.0          | 6.3.6  to 7.0.0                     | 1.17.0 or newer  | ✅ Fully Compatible     |
 | v1.0.0 to v1.6.0          | 6.2.12 to 6.3.6                     | 1.17.0 or newer  | ⚠️ Partially Compatible |
 
 
@@ -108,14 +106,15 @@ All URIs are relative to *http://127.0.0.1:9308*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*IndexAPI* | [**Bulk**](docs/IndexAPI.md#bulk) | **Post** /bulk | Bulk index operations
-*IndexAPI* | [**Delete**](docs/IndexAPI.md#delete) | **Post** /delete | Delete a document in an index
-*IndexAPI* | [**Insert**](docs/IndexAPI.md#insert) | **Post** /insert | Create a new document in an index
-*IndexAPI* | [**PartialReplace**](docs/IndexAPI.md#partialreplace) | **Post** /{index}/_update/{id} | Partially replaces a document in an index
-*IndexAPI* | [**Replace**](docs/IndexAPI.md#replace) | **Post** /replace | Replace new document in an index
-*IndexAPI* | [**Update**](docs/IndexAPI.md#update) | **Post** /update | Update a document in an index
-*SearchAPI* | [**Percolate**](docs/SearchAPI.md#percolate) | **Post** /pq/{index}/search | Perform reverse search on a percolate index
-*SearchAPI* | [**Search**](docs/SearchAPI.md#search) | **Post** /search | Performs a search on an index
+*IndexAPI* | [**Bulk**](docs/IndexAPI.md#bulk) | **Post** /bulk | Bulk table operations
+*IndexAPI* | [**Delete**](docs/IndexAPI.md#delete) | **Post** /delete | Delete a document in a table
+*IndexAPI* | [**Insert**](docs/IndexAPI.md#insert) | **Post** /insert | Create a new document in a table
+*IndexAPI* | [**PartialReplace**](docs/IndexAPI.md#partialreplace) | **Post** /{table}/_update/{id} | Partially replaces a document in a table
+*IndexAPI* | [**Replace**](docs/IndexAPI.md#replace) | **Post** /replace | Replace new document in a table
+*IndexAPI* | [**Update**](docs/IndexAPI.md#update) | **Post** /update | Update a document in a table
+*SearchAPI* | [**Autocomplete**](docs/SearchAPI.md#autocomplete) | **Post** /autocomplete | Performs an autocomplete search on a table
+*SearchAPI* | [**Percolate**](docs/SearchAPI.md#percolate) | **Post** /pq/{table}/search | Perform reverse search on a percolate table
+*SearchAPI* | [**Search**](docs/SearchAPI.md#search) | **Post** /search | Performs a search on a table
 *UtilsAPI* | [**Sql**](docs/UtilsAPI.md#sql) | **Post** /sql | Perform SQL requests
 
 
@@ -126,6 +125,7 @@ Class | Method | HTTP request | Description
  - [AggCompositeTerm](docs/AggCompositeTerm.md)
  - [AggTerms](docs/AggTerms.md)
  - [Aggregation](docs/Aggregation.md)
+ - [AutocompleteRequest](docs/AutocompleteRequest.md)
  - [BoolFilter](docs/BoolFilter.md)
  - [BulkResponse](docs/BulkResponse.md)
  - [DeleteDocumentRequest](docs/DeleteDocumentRequest.md)

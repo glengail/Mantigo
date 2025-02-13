@@ -20,7 +20,7 @@ import (
 // checks if the PercolateRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &PercolateRequest{}
 
-// PercolateRequest Object containing the query for percolating documents against stored queries in a percolate index
+// PercolateRequest Object containing the query for percolating documents against stored queries in a percolate table
 type PercolateRequest struct {
 	Query PercolateRequestQuery
 }

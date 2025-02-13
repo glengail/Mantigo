@@ -20,8 +20,8 @@ var _ MappedNullable = &DeleteResponse{}
 
 // DeleteResponse Response object for successful delete request
 type DeleteResponse struct {
-	// The name of the index from which the document was deleted
-	Index *string
+	// The name of the table from which the document was deleted
+	Table *string
 	// Number of documents deleted
 	Deleted *int32
 	// The ID of the deleted document. If multiple documents are deleted, the ID of the first deleted document is returned
@@ -49,36 +49,36 @@ func NewDeleteResponseWithDefaults() *DeleteResponse {
 	return &this
 }
 
-// GetIndex returns the Index field value if set, zero value otherwise.
-func (o *DeleteResponse) GetIndex() string {
-	if o == nil || IsNil(o.Index) {
+// GetTable returns the Table field value if set, zero value otherwise.
+func (o *DeleteResponse) GetTable() string {
+	if o == nil || IsNil(o.Table) {
 		var ret string
 		return ret
 	}
-	return *o.Index
+	return *o.Table
 }
 
-// GetIndexOk returns a tuple with the Index field value if set, nil otherwise
+// GetTableOk returns a tuple with the Table field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *DeleteResponse) GetIndexOk() (*string, bool) {
-	if o == nil || IsNil(o.Index) {
+func (o *DeleteResponse) GetTableOk() (*string, bool) {
+	if o == nil || IsNil(o.Table) {
 		return nil, false
 	}
-	return o.Index, true
+	return o.Table, true
 }
 
-// HasIndex returns a boolean if a field has been set.
-func (o *DeleteResponse) HasIndex() bool {
-	if o != nil && !IsNil(o.Index) {
+// HasTable returns a boolean if a field has been set.
+func (o *DeleteResponse) HasTable() bool {
+	if o != nil && !IsNil(o.Table) {
 		return true
 	}
 
 	return false
 }
 
-// SetIndex gets a reference to the given string and assigns it to the Index field.
-func (o *DeleteResponse) SetIndex(v string) {
-	o.Index = &v
+// SetTable gets a reference to the given string and assigns it to the Table field.
+func (o *DeleteResponse) SetTable(v string) {
+	o.Table = &v
 }
 
 // GetDeleted returns the Deleted field value if set, zero value otherwise.
@@ -219,8 +219,8 @@ func (o DeleteResponse) MarshalJSON() ([]byte, error) {
 
 func (o DeleteResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Index) {
-		toSerialize["_index"] = o.Index
+	if !IsNil(o.Table) {
+		toSerialize["table"] = o.Table
 	}
 	if !IsNil(o.Deleted) {
 		toSerialize["deleted"] = o.Deleted

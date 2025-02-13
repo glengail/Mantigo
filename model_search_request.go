@@ -22,8 +22,8 @@ var _ MappedNullable = &SearchRequest{}
 
 // SearchRequest Request object for search operation
 type SearchRequest struct {
-	// The index to perform the search on
-	Index string
+	// The table to perform the search on
+	Table string
 	Query *SearchQuery
 	// Join clause to combine search data from multiple tables
 	Join []Join
@@ -55,9 +55,9 @@ type _SearchRequest SearchRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSearchRequest(index string) *SearchRequest {
+func NewSearchRequest(table string) *SearchRequest {
 	this := SearchRequest{}
-	this.Index = index
+	this.Table = table
 	return &this
 }
 
@@ -69,28 +69,28 @@ func NewSearchRequestWithDefaults() *SearchRequest {
 	return &this
 }
 
-// GetIndex returns the Index field value
-func (o *SearchRequest) GetIndex() string {
+// GetTable returns the Table field value
+func (o *SearchRequest) GetTable() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.Index
+	return o.Table
 }
 
-// GetIndexOk returns a tuple with the Index field value
+// GetTableOk returns a tuple with the Table field value
 // and a boolean to check if the value has been set.
-func (o *SearchRequest) GetIndexOk() (*string, bool) {
+func (o *SearchRequest) GetTableOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Index, true
+	return &o.Table, true
 }
 
-// SetIndex sets field value
-func (o *SearchRequest) SetIndex(v string) {
-	o.Index = v
+// SetTable sets field value
+func (o *SearchRequest) SetTable(v string) {
+	o.Table = v
 }
 
 // GetQuery returns the Query field value if set, zero value otherwise.
@@ -555,7 +555,7 @@ func (o SearchRequest) MarshalJSON() ([]byte, error) {
 
 func (o SearchRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["index"] = o.Index
+	toSerialize["table"] = o.Table
 	if !IsNil(o.Query) {
 		toSerialize["query"] = o.Query
 	}

@@ -13,6 +13,7 @@ docs/AggCompositeSource.md
 docs/AggCompositeTerm.md
 docs/AggTerms.md
 docs/Aggregation.md
+docs/AutocompleteRequest.md
 docs/BoolFilter.md
 docs/BulkResponse.md
 docs/DeleteDocumentRequest.md
@@ -57,6 +58,7 @@ model_agg_composite_source.go
 model_agg_composite_term.go
 model_agg_terms.go
 model_aggregation.go
+model_autocomplete_request.go
 model_bool_filter.go
 model_bulk_response.go
 model_delete_document_request.go
