@@ -1,4 +1,4 @@
-module github.com/manticoresoftware/manticoresearch-go
+module github.com/glengail/Mantigo
 
 go 1.21
 
