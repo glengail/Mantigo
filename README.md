@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Manticorer Go client
 
 Сlient for Manticore Search.
@@ -180,3 +181,7 @@ Each of these functions takes a value of the given basic type and returns a poin
 * `PtrFloat64`
 * `PtrString`
 * `PtrTime`
+=======
+# Mantigo
+基于fasthttp对官方go客户端的rebuild
+>>>>>>> 6daf5b890b035489dd0701fe3be17ec0f471c235
