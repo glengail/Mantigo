@@ -1,7 +1,7 @@
 /*
 Manticore Search Client
 
-Сlient for Manticore Search. 
+Сlient for Manticore Search.
 
 API version: 5.0.0
 Contact: info@manticoresearch.com
@@ -19,10 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
-	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -33,6 +30,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -65,7 +63,7 @@ type service struct {
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(cfg *Configuration) *APIClient {
 	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = http.DefaultClient
+		cfg.HTTPClient = &fasthttp.Client{}
 	}
 
 	c := &APIClient{}
@@ -248,27 +246,27 @@ func parameterToJson(obj interface{}) (string, error) {
 }
 
 // callAPI do the request.
-func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
-	if c.cfg.Debug {
-		dump, err := httputil.DumpRequestOut(request, true)
-		if err != nil {
-			return nil, err
-		}
-		log.Printf("\n%s\n", string(dump))
-	}
+func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response, err error) {
+	// if c.cfg.Debug {
+	// 	dump, err := httputil.DumpRequestOut(request, true)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	log.Printf("\n%s\n", string(dump))
+	// }
 
-	resp, err := c.cfg.HTTPClient.Do(request)
+	err = c.cfg.HTTPClient.Do(request,resp)
 	if err != nil {
 		return resp, err
 	}
 
-	if c.cfg.Debug {
-		dump, err := httputil.DumpResponse(resp, true)
-		if err != nil {
-			return resp, err
-		}
-		log.Printf("\n%s\n", string(dump))
-	}
+	// if c.cfg.Debug {
+	// 	dump, err := httputil.DumpResponse(resp, true)
+	// 	if err != nil {
+	// 		return resp, err
+	// 	}
+	// 	log.Printf("\n%s\n", string(dump))
+	// }
 	return resp, err
 }
 
@@ -292,15 +290,15 @@ func (c *APIClient) prepareRequest(
 	headerParams map[string]string,
 	queryParams url.Values,
 	formParams url.Values,
-	formFiles []formFile) (localVarRequest *http.Request, err error) {
+	formFiles []formFile) (localVarRequest *fasthttp.Request, err error) {
 
 	var body *bytes.Buffer
 
 	// Detect postBody type and post.
 	if postBody != nil {
 		contentType := headerParams["Content-Type"]
-		if contentType == "" {
-			contentType = detectContentType(postBody)
+		if contentType != "" {
+			//contentType = detectContentType(postBody)
 			headerParams["Content-Type"] = contentType
 		}
 
@@ -395,9 +393,15 @@ func (c *APIClient) prepareRequest(
 
 	// Generate a new request
 	if body != nil {
-		localVarRequest, err = http.NewRequest(method, url.String(), body)
+		//localVarRequest, err = http.NewRequest(method, url.String(), body)
+		localVarRequest = fasthttp.AcquireRequest()
+		localVarRequest.Header.SetMethod(method)
+		localVarRequest.Header.SetRequestURI(url.String())
+		localVarRequest.SetBodyStream(body,body.Len())
 	} else {
-		localVarRequest, err = http.NewRequest(method, url.String(), nil)
+		localVarRequest = fasthttp.AcquireRequest()
+		localVarRequest.Header.SetMethod(method)
+		localVarRequest.Header.SetRequestURI(url.String())
 	}
 	if err != nil {
 		return nil, err
@@ -405,23 +409,21 @@ func (c *APIClient) prepareRequest(
 
 	// add header parameters, if any
 	if len(headerParams) > 0 {
-		headers := http.Header{}
 		for h, v := range headerParams {
-			headers[h] = []string{v}
+			localVarRequest.Header.Set(h,v)
 		}
-		localVarRequest.Header = headers
 	}
 
 	// Add the user agent to the request.
 	localVarRequest.Header.Add("User-Agent", c.cfg.UserAgent)
 
-	if ctx != nil {
-		// add context to the request
-		localVarRequest = localVarRequest.WithContext(ctx)
+	// if ctx != nil {
+	// 	// add context to the request
+	// 	localVarRequest = localVarRequest.WithContext(ctx)
 
-		// Walk through any authentication.
+	// 	// Walk through any authentication.
 
-	}
+	// }
 
 	for header, value := range c.cfg.DefaultHeader {
 		localVarRequest.Header.Add(header, value)
@@ -542,75 +544,76 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 }
 
 // detectContentType method is used to figure out `Request.Body` content type for request header
-func detectContentType(body interface{}) string {
-	contentType := "text/plain; charset=utf-8"
-	kind := reflect.TypeOf(body).Kind()
 
-	switch kind {
-	case reflect.Struct, reflect.Map, reflect.Ptr:
-		contentType = "application/json; charset=utf-8"
-	case reflect.String:
-		contentType = "text/plain; charset=utf-8"
-	default:
-		if b, ok := body.([]byte); ok {
-			contentType = http.DetectContentType(b)
-		} else if kind == reflect.Slice {
-			contentType = "application/json; charset=utf-8"
-		}
-	}
+// func detectContentType(body interface{}) string {
+// 	contentType := "text/plain; charset=utf-8"
+// 	kind := reflect.TypeOf(body).Kind()
 
-	return contentType
-}
+// 	switch kind {
+// 	case reflect.Struct, reflect.Map, reflect.Ptr:
+// 		contentType = "application/json; charset=utf-8"
+// 	case reflect.String:
+// 		contentType = "text/plain; charset=utf-8"
+// 	default:
+// 		if b, ok := body.([]byte); ok {
+// 			contentType = http.DetectContentType(b)
+// 		} else if kind == reflect.Slice {
+// 			contentType = "application/json; charset=utf-8"
+// 		}
+// 	}
+
+// 	return contentType
+// }
 
 // Ripped from https://github.com/gregjones/httpcache/blob/master/httpcache.go
 type cacheControl map[string]string
 
-func parseCacheControl(headers http.Header) cacheControl {
-	cc := cacheControl{}
-	ccHeader := headers.Get("Cache-Control")
-	for _, part := range strings.Split(ccHeader, ",") {
-		part = strings.Trim(part, " ")
-		if part == "" {
-			continue
-		}
-		if strings.ContainsRune(part, '=') {
-			keyval := strings.Split(part, "=")
-			cc[strings.Trim(keyval[0], " ")] = strings.Trim(keyval[1], ",")
-		} else {
-			cc[part] = ""
-		}
-	}
-	return cc
-}
+// func parseCacheControl(headers http.Header) cacheControl {
+// 	cc := cacheControl{}
+// 	ccHeader := headers.Get("Cache-Control")
+// 	for _, part := range strings.Split(ccHeader, ",") {
+// 		part = strings.Trim(part, " ")
+// 		if part == "" {
+// 			continue
+// 		}
+// 		if strings.ContainsRune(part, '=') {
+// 			keyval := strings.Split(part, "=")
+// 			cc[strings.Trim(keyval[0], " ")] = strings.Trim(keyval[1], ",")
+// 		} else {
+// 			cc[part] = ""
+// 		}
+// 	}
+// 	return cc
+// }
 
-// CacheExpires helper function to determine remaining time before repeating a request.
-func CacheExpires(r *http.Response) time.Time {
-	// Figure out when the cache expires.
-	var expires time.Time
-	now, err := time.Parse(time.RFC1123, r.Header.Get("date"))
-	if err != nil {
-		return time.Now()
-	}
-	respCacheControl := parseCacheControl(r.Header)
+// // CacheExpires helper function to determine remaining time before repeating a request.
+// func CacheExpires(r *http.Response) time.Time {
+// 	// Figure out when the cache expires.
+// 	var expires time.Time
+// 	now, err := time.Parse(time.RFC1123, r.Header.Get("date"))
+// 	if err != nil {
+// 		return time.Now()
+// 	}
+// 	respCacheControl := parseCacheControl(r.Header)
 
-	if maxAge, ok := respCacheControl["max-age"]; ok {
-		lifetime, err := time.ParseDuration(maxAge + "s")
-		if err != nil {
-			expires = now
-		} else {
-			expires = now.Add(lifetime)
-		}
-	} else {
-		expiresHeader := r.Header.Get("Expires")
-		if expiresHeader != "" {
-			expires, err = time.Parse(time.RFC1123, expiresHeader)
-			if err != nil {
-				expires = now
-			}
-		}
-	}
-	return expires
-}
+// 	if maxAge, ok := respCacheControl["max-age"]; ok {
+// 		lifetime, err := time.ParseDuration(maxAge + "s")
+// 		if err != nil {
+// 			expires = now
+// 		} else {
+// 			expires = now.Add(lifetime)
+// 		}
+// 	} else {
+// 		expiresHeader := r.Header.Get("Expires")
+// 		if expiresHeader != "" {
+// 			expires, err = time.Parse(time.RFC1123, expiresHeader)
+// 			if err != nil {
+// 				expires = now
+// 			}
+// 		}
+// 	}
+// 	return expires
+// }
 
 func strlen(s string) int {
 	return utf8.RuneCountInString(s)

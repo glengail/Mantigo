@@ -12,10 +12,9 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"bytes"
 	"context"
 	"io"
-	"net/http"
+	"github.com/valyala/fasthttp"
 	"net/url"
 	"strings"
 )
@@ -35,7 +34,7 @@ func (r ApiAutocompleteRequest) AutocompleteRequest(autocompleteRequest Autocomp
 	return r
 }
 
-func (r ApiAutocompleteRequest) Execute() ([]map[string]interface{}, *http.Response, error) {
+func (r ApiAutocompleteRequest) Execute() ([]map[string]interface{}, *fasthttp.Response, error) {
 	return r.ApiService.AutocompleteExecute(r)
 }
 
@@ -96,9 +95,9 @@ func (a *SearchAPIService) Autocomplete(ctx context.Context) ApiAutocompleteRequ
 
 // Execute executes the request
 //  @return []map[string]interface{}
-func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[string]interface{}, *http.Response, error) {
+func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[string]interface{}, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  []map[string]interface{}
@@ -143,34 +142,35 @@ func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -194,7 +194,7 @@ func (r ApiPercolateRequest) PercolateRequest(percolateRequest PercolateRequest)
 	return r
 }
 
-func (r ApiPercolateRequest) Execute() (*SearchResponse, *http.Response, error) {
+func (r ApiPercolateRequest) Execute() (*SearchResponse, *fasthttp.Response, error) {
 	return r.ApiService.PercolateExecute(r)
 }
 
@@ -264,9 +264,9 @@ func (a *SearchAPIService) Percolate(ctx context.Context, table string) ApiPerco
 
 // Execute executes the request
 //  @return SearchResponse
-func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchResponse, *http.Response, error) {
+func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *SearchResponse
@@ -312,34 +312,35 @@ func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchRespo
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -362,7 +363,7 @@ func (r ApiSearchRequest) SearchRequest(searchRequest SearchRequest) ApiSearchRe
 	return r
 }
 
-func (r ApiSearchRequest) Execute() (*SearchResponse, *http.Response, error) {
+func (r ApiSearchRequest) Execute() (*SearchResponse, *fasthttp.Response, error) {
 	return r.ApiService.SearchExecute(r)
 }
 
@@ -416,9 +417,9 @@ func (a *SearchAPIService) Search(ctx context.Context) ApiSearchRequest {
 
 // Execute executes the request
 //  @return SearchResponse
-func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *http.Response, error) {
+func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *SearchResponse
@@ -463,34 +464,35 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,

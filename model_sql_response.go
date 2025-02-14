@@ -13,7 +13,7 @@ package openapi
 
 import (
 	"encoding/json"
-	"gopkg.in/validator.v2"
+	validator "gopkg.in/validator.v2"
 	"fmt"
 )
 

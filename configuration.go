@@ -14,8 +14,8 @@ package openapi
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
+	"github.com/valyala/fasthttp"
 )
 
 // contextKeys are used to identify the type of value in the context.
@@ -80,7 +80,7 @@ type Configuration struct {
 	Debug            bool              `json:"debug,omitempty"`
 	Servers          ServerConfigurations
 	OperationServers map[string]ServerConfigurations
-	HTTPClient       *http.Client
+	HTTPClient       *fasthttp.Client
 }
 
 // NewConfiguration returns a new Configuration object

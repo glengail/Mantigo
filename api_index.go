@@ -15,9 +15,9 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/url"
 	"strings"
+	"github.com/valyala/fasthttp"
 )
 
 
@@ -35,7 +35,7 @@ func (r ApiBulkRequest) Body(body string) ApiBulkRequest {
 	return r
 }
 
-func (r ApiBulkRequest) Execute() (*BulkResponse, *http.Response, error) {
+func (r ApiBulkRequest) Execute() (*BulkResponse, *fasthttp.Response, error) {
 	return r.ApiService.BulkExecute(r)
 }
 
@@ -86,9 +86,9 @@ func (a *IndexAPIService) Bulk(ctx context.Context) ApiBulkRequest {
 
 // Execute executes the request
 //  @return BulkResponse
-func (a *IndexAPIService) BulkExecute(r ApiBulkRequest) (*BulkResponse, *http.Response, error) {
+func (a *IndexAPIService) BulkExecute(r ApiBulkRequest) (*BulkResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *BulkResponse
@@ -133,34 +133,38 @@ func (a *IndexAPIService) BulkExecute(r ApiBulkRequest) (*BulkResponse, *http.Re
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -183,7 +187,7 @@ func (r ApiDeleteRequest) DeleteDocumentRequest(deleteDocumentRequest DeleteDocu
 	return r
 }
 
-func (r ApiDeleteRequest) Execute() (*DeleteResponse, *http.Response, error) {
+func (r ApiDeleteRequest) Execute() (*DeleteResponse, *fasthttp.Response, error) {
 	return r.ApiService.DeleteExecute(r)
 }
 
@@ -236,9 +240,9 @@ func (a *IndexAPIService) Delete(ctx context.Context) ApiDeleteRequest {
 
 // Execute executes the request
 //  @return DeleteResponse
-func (a *IndexAPIService) DeleteExecute(r ApiDeleteRequest) (*DeleteResponse, *http.Response, error) {
+func (a *IndexAPIService) DeleteExecute(r ApiDeleteRequest) (*DeleteResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *DeleteResponse
@@ -283,34 +287,37 @@ func (a *IndexAPIService) DeleteExecute(r ApiDeleteRequest) (*DeleteResponse, *h
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -333,7 +340,7 @@ func (r ApiInsertRequest) InsertDocumentRequest(insertDocumentRequest InsertDocu
 	return r
 }
 
-func (r ApiInsertRequest) Execute() (*SuccessResponse, *http.Response, error) {
+func (r ApiInsertRequest) Execute() (*SuccessResponse, *fasthttp.Response, error) {
 	return r.ApiService.InsertExecute(r)
 }
 
@@ -401,9 +408,9 @@ func (a *IndexAPIService) Insert(ctx context.Context) ApiInsertRequest {
 
 // Execute executes the request
 //  @return SuccessResponse
-func (a *IndexAPIService) InsertExecute(r ApiInsertRequest) (*SuccessResponse, *http.Response, error) {
+func (a *IndexAPIService) InsertExecute(r ApiInsertRequest) (*SuccessResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *SuccessResponse
@@ -448,34 +455,35 @@ func (a *IndexAPIService) InsertExecute(r ApiInsertRequest) (*SuccessResponse, *
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -500,7 +508,7 @@ func (r ApiPartialReplaceRequest) ReplaceDocumentRequest(replaceDocumentRequest 
 	return r
 }
 
-func (r ApiPartialReplaceRequest) Execute() (*UpdateResponse, *http.Response, error) {
+func (r ApiPartialReplaceRequest) Execute() (*UpdateResponse, *fasthttp.Response, error) {
 	return r.ApiService.PartialReplaceExecute(r)
 }
 
@@ -531,9 +539,9 @@ func (a *IndexAPIService) PartialReplace(ctx context.Context, table string, id i
 
 // Execute executes the request
 //  @return UpdateResponse
-func (a *IndexAPIService) PartialReplaceExecute(r ApiPartialReplaceRequest) (*UpdateResponse, *http.Response, error) {
+func (a *IndexAPIService) PartialReplaceExecute(r ApiPartialReplaceRequest) (*UpdateResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *UpdateResponse
@@ -580,34 +588,35 @@ func (a *IndexAPIService) PartialReplaceExecute(r ApiPartialReplaceRequest) (*Up
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -630,7 +639,7 @@ func (r ApiReplaceRequest) InsertDocumentRequest(insertDocumentRequest InsertDoc
 	return r
 }
 
-func (r ApiReplaceRequest) Execute() (*SuccessResponse, *http.Response, error) {
+func (r ApiReplaceRequest) Execute() (*SuccessResponse, *fasthttp.Response, error) {
 	return r.ApiService.ReplaceExecute(r)
 }
 
@@ -657,9 +666,9 @@ func (a *IndexAPIService) Replace(ctx context.Context) ApiReplaceRequest {
 
 // Execute executes the request
 //  @return SuccessResponse
-func (a *IndexAPIService) ReplaceExecute(r ApiReplaceRequest) (*SuccessResponse, *http.Response, error) {
+func (a *IndexAPIService) ReplaceExecute(r ApiReplaceRequest) (*SuccessResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *SuccessResponse
@@ -704,34 +713,35 @@ func (a *IndexAPIService) ReplaceExecute(r ApiReplaceRequest) (*SuccessResponse,
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
@@ -754,7 +764,7 @@ func (r ApiUpdateRequest) UpdateDocumentRequest(updateDocumentRequest UpdateDocu
 	return r
 }
 
-func (r ApiUpdateRequest) Execute() (*UpdateResponse, *http.Response, error) {
+func (r ApiUpdateRequest) Execute() (*UpdateResponse, *fasthttp.Response, error) {
 	return r.ApiService.UpdateExecute(r)
 }
 
@@ -807,9 +817,9 @@ func (a *IndexAPIService) Update(ctx context.Context) ApiUpdateRequest {
 
 // Execute executes the request
 //  @return UpdateResponse
-func (a *IndexAPIService) UpdateExecute(r ApiUpdateRequest) (*UpdateResponse, *http.Response, error) {
+func (a *IndexAPIService) UpdateExecute(r ApiUpdateRequest) (*UpdateResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *UpdateResponse
@@ -854,34 +864,35 @@ func (a *IndexAPIService) UpdateExecute(r ApiUpdateRequest) (*UpdateResponse, *h
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,

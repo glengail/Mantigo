@@ -12,10 +12,9 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"bytes"
 	"context"
 	"io"
-	"net/http"
+	"github.com/valyala/fasthttp"
 	"net/url"
 )
 
@@ -42,7 +41,7 @@ func (r ApiSqlRequest) RawResponse(rawResponse bool) ApiSqlRequest {
 	return r
 }
 
-func (r ApiSqlRequest) Execute() (*SqlResponse, *http.Response, error) {
+func (r ApiSqlRequest) Execute() (*SqlResponse, *fasthttp.Response, error) {
 	return r.ApiService.SqlExecute(r)
 }
 
@@ -68,9 +67,9 @@ func (a *UtilsAPIService) Sql(ctx context.Context) ApiSqlRequest {
 
 // Execute executes the request
 //  @return SqlResponse
-func (a *UtilsAPIService) SqlExecute(r ApiSqlRequest) (*SqlResponse, *http.Response, error) {
+func (a *UtilsAPIService) SqlExecute(r ApiSqlRequest) (*SqlResponse, *fasthttp.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = fasthttp.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
 		localVarReturnValue  *SqlResponse
@@ -120,34 +119,35 @@ func (a *UtilsAPIService) SqlExecute(r ApiSqlRequest) (*SqlResponse, *http.Respo
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
 
-	if localVarHTTPResponse.StatusCode >= 300 {
+	if localVarHTTPResponse.StatusCode() >= 300 {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
 		}
 			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 			if err != nil {
 				newErr.error = err.Error()
 				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
 					newErr.model = v
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
 	if err != nil {
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
