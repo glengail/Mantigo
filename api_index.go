@@ -12,7 +12,6 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"bytes"
 	"context"
 	"io"
 	"net/url"
