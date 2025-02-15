@@ -248,7 +248,7 @@ func parameterToJson(obj interface{}) (string, error) {
 }
 
 // callAPI do the request.
-func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error) {
+func (c *APIClient) callAPI(ctx context.Context,request *fasthttp.Request) (*fasthttp.Response,error) {
 	// if c.cfg.Debug {
 	// 	dump, err := httputil.DumpRequestOut(request, true)
 	// 	if err != nil {
@@ -259,13 +259,17 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error
 	if c.cfg.Debug{
 		log.Printf("callAPI req:\n%v\n",request.String())
 	}
-	resp := &fasthttp.Response{}
-
+	resp := fasthttp.AcquireResponse()
+	go func ()  {
+		<-ctx.Done()
+		fasthttp.ReleaseResponse(resp)
+	}()
 
 	err := c.cfg.HTTPClient.Do(request,resp)
-	if c.cfg.Debug {
-		log.Printf("callApi resp\n%v\n",resp.String())
-	}
+	// if c.cfg.Debug {
+	// 	log.Printf("resp.Header.Header(): %v\n", string(resp.Header.Header()))
+	// 	log.Printf("callApi resp\n%v\n",resp.String())
+	// }
 	if err != nil {
 		return resp, err
 	}
@@ -307,8 +311,8 @@ func (c *APIClient) prepareRequest(
 	// Detect postBody type and post.
 	if postBody != nil {
 		contentType := headerParams["Content-Type"]
-		if contentType != "" {
-			//contentType = detectContentType(postBody)
+		if contentType == "" {
+			contentType = detectContentType(postBody)
 			headerParams["Content-Type"] = contentType
 		}
 
@@ -407,7 +411,7 @@ func (c *APIClient) prepareRequest(
 		localVarRequest = fasthttp.AcquireRequest()
 		localVarRequest.Header.SetMethod(method)
 		localVarRequest.Header.SetRequestURI(url.String())
-		localVarRequest.SetBodyStream(body,body.Len())
+		localVarRequest.SetBody(body.Bytes())
 	} else {
 		localVarRequest = fasthttp.AcquireRequest()
 		localVarRequest.Header.SetMethod(method)

@@ -14,6 +14,7 @@ package openapi
 import (
 	"context"
 	"io"
+
 	//"log"
 	"net/url"
 	"strings"
@@ -142,13 +143,12 @@ func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -312,13 +312,13 @@ func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchRespo
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -460,21 +460,18 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 	// body params
 	localVarPostBody = r.searchRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	//defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	if err != nil || localVarHTTPResponse == nil {
 		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	//localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
-	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
-	copy(localVarBody, localVarHTTPResponse.Body())
-
+	localVarBody := localVarHTTPResponse.Body()
+	//localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {

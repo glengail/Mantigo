@@ -131,15 +131,14 @@ func (a *IndexAPIService) BulkExecute(r ApiBulkRequest) (*BulkResponse, *fasthtt
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -285,15 +284,14 @@ func (a *IndexAPIService) DeleteExecute(r ApiDeleteRequest) (*DeleteResponse, *f
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -453,13 +451,12 @@ func (a *IndexAPIService) InsertExecute(r ApiInsertRequest) (*SuccessResponse, *
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -586,13 +583,12 @@ func (a *IndexAPIService) PartialReplaceExecute(r ApiPartialReplaceRequest) (*Up
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -711,13 +707,12 @@ func (a *IndexAPIService) ReplaceExecute(r ApiReplaceRequest) (*SuccessResponse,
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -862,13 +857,13 @@ func (a *IndexAPIService) UpdateExecute(r ApiUpdateRequest) (*UpdateResponse, *f
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {

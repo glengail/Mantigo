@@ -13,7 +13,6 @@ package openapi
 
 import (
 	"context"
-	"io"
 	"github.com/valyala/fasthttp"
 	"net/url"
 )
@@ -118,13 +117,13 @@ func (a *UtilsAPIService) SqlExecute(r ApiSqlRequest) (*SqlResponse, *fasthttp.R
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
+	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
 	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := localVarHTTPResponse.Body()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {

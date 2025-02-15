@@ -101,14 +101,14 @@ func TestSearch(t *testing.T) {
 		},
 	}
 	req.SetQuery(query)
-	resp, resp1, err := apiClient.SearchAPI.Search(context.Background()).SearchRequest(*req).Execute()
+	ctx := context.Background()
+	defer ctx.Done()
+	resp, resp1, err := apiClient.SearchAPI.Search(ctx).SearchRequest(*req).Execute()
 	if err != nil {
 		fmt.Printf("Search error: %s\n", err)
 	}
 	fmt.Printf("Search resp: %+v \n", resp)
-	localVarBody := make([]byte, len(resp1.Body()))
-	copy(localVarBody, resp1.Body())
-	fmt.Printf("Search resp1.body: %+v \n", string(localVarBody))
+	fmt.Printf("Search resp1: %+v \n", resp)
 	if resp == nil {
 		t.Fatal("resp is nil")
 	}
