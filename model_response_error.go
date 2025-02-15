@@ -16,6 +16,7 @@ import (
 	_"fmt"
 	_"bytes"
 	"fmt"
+	"gopkg.in/validator.v2"
 )
 
 // ResponseError - struct for ResponseError

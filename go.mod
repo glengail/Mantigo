@@ -9,4 +9,5 @@ require (
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.58.0 // indirect
+	gopkg.in/validator.v2 v2.0.1 // indirect
 )
