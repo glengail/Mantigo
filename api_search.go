@@ -464,12 +464,13 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
-	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	//defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarHTTPResponse.CloseBodyStream()
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
