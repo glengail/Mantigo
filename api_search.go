@@ -142,7 +142,7 @@ func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -311,7 +311,7 @@ func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchRespo
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
@@ -463,7 +463,7 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		
 		return localVarReturnValue, localVarHTTPResponse, err

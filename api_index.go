@@ -283,7 +283,7 @@ func (a *IndexAPIService) DeleteExecute(r ApiDeleteRequest) (*DeleteResponse, *f
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 
 
 	if err != nil || localVarHTTPResponse == nil {
@@ -450,7 +450,7 @@ func (a *IndexAPIService) InsertExecute(r ApiInsertRequest) (*SuccessResponse, *
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -582,7 +582,7 @@ func (a *IndexAPIService) PartialReplaceExecute(r ApiPartialReplaceRequest) (*Up
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -706,7 +706,7 @@ func (a *IndexAPIService) ReplaceExecute(r ApiReplaceRequest) (*SuccessResponse,
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -856,7 +856,7 @@ func (a *IndexAPIService) UpdateExecute(r ApiUpdateRequest) (*UpdateResponse, *f
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
