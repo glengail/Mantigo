@@ -13,7 +13,6 @@ package openapi
 
 import (
 	"context"
-	"io"
 	"net/url"
 	"strings"
 	"github.com/valyala/fasthttp"

@@ -13,7 +13,6 @@ package openapi
 
 import (
 	"context"
-	"io"
 
 	//"log"
 	"net/url"
