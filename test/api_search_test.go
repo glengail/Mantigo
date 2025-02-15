@@ -10,14 +10,16 @@ Testing SearchAPIService
 package openapi
 
 import (
-	"fmt"
 	"context"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"testing"
+
+	Manticoresearch "github.com/glengail/Mantigo"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"encoding/json"
-	"strings"
-	Manticoresearch "github.com/manticoresoftware/manticoresearch-go"
 )
 
 func Test_openapi_SearchAPIService(t *testing.T) {
@@ -28,26 +30,26 @@ func Test_openapi_SearchAPIService(t *testing.T) {
 
 	t.Run("Test SearchAPIService Search", func(t *testing.T) {
 
-		docs := []string {
- 			`{"insert": {"table" : "movies", "id" : 1, "doc" : {"title" : "Star Trek 2: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "year": 2002, "rating": 6.4, "code": [1,2,3]}}}`,
+		docs := []string{
+			`{"insert": {"table" : "movies", "id" : 1, "doc" : {"title" : "Star Trek 2: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "year": 2002, "rating": 6.4, "code": [1,2,3]}}}`,
 			`{"insert": {"table" : "movies", "id" : 2, "doc" : {"title" : "Star Trek 1: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "year": 2001, "rating": 6.5, "code": [1,12,3]}}}`,
 			`{"insert": {"table" : "movies", "id" : 3, "doc" : {"title" : "Star Trek 3: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "year": 2003, "rating": 6.6, "code": [11,2,3]}}}`,
 			`{"insert": {"table" : "movies", "id" : 4, "doc" : {"title" : "Star Trek 4: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "year": 100000000000, "rating": 6.5, "code": [1,2,4]}}}`,
-		};
- 		apiClient.UtilsAPI.Sql(context.Background()).Body("DROP TABLE IF EXISTS movies").Execute()
+		}
+		apiClient.UtilsAPI.Sql(context.Background()).Body("DROP TABLE IF EXISTS movies").Execute()
 		apiClient.UtilsAPI.Sql(context.Background()).Body("CREATE TABLE IF NOT EXISTS movies (title text, plot text, year bigint, rating float, code multi)").Execute()
 		body := strings.Join(docs, "\n")
 		bulkResp, bulkHttpRes, bulkErr := apiClient.IndexAPI.Bulk(context.Background()).Body(body).Execute()
-   		fmt.Printf("%+v\n\n", bulkHttpRes)
-   		require.Nil(t, bulkErr)
+		fmt.Printf("%+v\n\n", bulkHttpRes)
+		require.Nil(t, bulkErr)
 		require.NotNil(t, bulkResp)
 		outRes, outErr := json.Marshal(bulkResp)
 		require.Nil(t, outErr)
 		fmt.Printf("%+v\n\n", string(outRes[:]))
-    	assert.Equal(t, 200, bulkHttpRes.StatusCode)
+		assert.Equal(t, 200, bulkHttpRes.StatusCode)
 
 		queryHighlight := Manticoresearch.NewHighlight()
- 		queryHighlight.Fields =  map[string]interface{} {"title": map[string]interface{} {}}
+		queryHighlight.Fields = map[string]interface{}{"title": map[string]interface{}{}}
 
 		searchQuery := Manticoresearch.NewSearchQuery()
 		searchQuery.QueryString = "@title Trek 4"
@@ -63,7 +65,81 @@ func Test_openapi_SearchAPIService(t *testing.T) {
 		fmt.Printf("%+v\n\n", string(outRes[:]))
 		assert.Equal(t, 200, httpRes.StatusCode)
 
-		fmt.Println("Search tests finished");
+		fmt.Println("Search tests finished")
 	})
 
+}
+
+type postInfo struct {
+	ID              int64  `json:"id"`
+	UserID          int64  `json:"user_id"`
+	CommentCount    int64  `json:"comment_count"`
+	CollectionCount int64  `json:"collection_count"`
+	UpvoteCount     int64  `json:"upvote_count"`
+	IsTop           int    `json:"is_top"`
+	IsEssence       int    `json:"is_essence"`
+	IsLock          int    `json:"is_lock"`
+	LatestRepliedOn int64  `json:"latest_replied_on"`
+	CreatedOn       int64  `json:"created_on"`
+	ModifiedOn      int64  `json:"modified_on"`
+	AttachmentPrice int64  `json:"attachment_price"`
+	IPLoc           string `json:"ip_loc"`
+}
+
+func TestSearch(t *testing.T) {
+	configuration := Manticoresearch.NewConfiguration()
+	configuration.Servers[0].URL = "http://192.168.1.17:9308"
+
+	apiClient := Manticoresearch.NewAPIClient(configuration)
+	indexName := "paopao"
+	content := "abc"
+	req := Manticoresearch.NewSearchRequest(indexName)
+	query := Manticoresearch.SearchQuery{
+		Match: map[string]interface{}{
+			"content": content,
+		},
+	}
+	req.SetQuery(query)
+	resp, resp1, err := apiClient.SearchAPI.Search(context.Background()).SearchRequest(*req).Execute()
+	if err != nil {
+		fmt.Printf("Search error: %s\n", err)
+	} else {
+		if resp1 == nil {
+			t.Fatal("resp1 is nil")
+		}
+		if resp == nil {
+			t.Fatal("resp is nil")
+		}
+		fmt.Printf("Search result: %+v \n%+v\n", resp, resp1)
+	}
+	posts := make([]*postInfo, 0, len(resp.Hits.Hits))
+	for _, hit := range resp.Hits.Hits {
+		fmt.Printf("hit: %v\n", hit)
+		raw, err := json.Marshal(hit["_source"])
+		if err != nil {
+			fmt.Printf("Search error: %s\n", err)
+		}
+		p := &postInfo{}
+		if err = json.Unmarshal(raw, p); err != nil {
+			return
+		}
+		posts = append(posts, &postInfo{
+			ID:              int64(hit["_id"].(float64)),
+			UserID:          p.UserID,
+			CommentCount:    p.CommentCount,
+			CollectionCount: p.CollectionCount,
+			UpvoteCount:     p.UpvoteCount,
+			IsTop:           p.IsTop,
+			IsEssence:       p.IsEssence,
+			IsLock:          p.IsLock,
+			LatestRepliedOn: p.LatestRepliedOn,
+			CreatedOn:       p.CreatedOn,
+			ModifiedOn:      p.ModifiedOn,
+			AttachmentPrice: p.AttachmentPrice,
+			IPLoc:           p.IPLoc,
+		})
+	}
+	for _, post := range posts {
+		fmt.Printf("post: %v\n", post)
+	}
 }

@@ -466,6 +466,7 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	//defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
+		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
