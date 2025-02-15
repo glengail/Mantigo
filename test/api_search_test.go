@@ -70,21 +70,21 @@ func Test_openapi_SearchAPIService(t *testing.T) {
 
 }
 
-type postInfo struct {
-	ID              int64  `json:"id"`
-	UserID          int64  `json:"user_id"`
-	CommentCount    int64  `json:"comment_count"`
-	CollectionCount int64  `json:"collection_count"`
-	UpvoteCount     int64  `json:"upvote_count"`
-	IsTop           int    `json:"is_top"`
-	IsEssence       int    `json:"is_essence"`
-	IsLock          int    `json:"is_lock"`
-	LatestRepliedOn int64  `json:"latest_replied_on"`
-	CreatedOn       int64  `json:"created_on"`
-	ModifiedOn      int64  `json:"modified_on"`
-	AttachmentPrice int64  `json:"attachment_price"`
-	IPLoc           string `json:"ip_loc"`
-}
+// type postInfo struct {
+// 	ID              int64  `json:"id"`
+// 	UserID          int64  `json:"user_id"`
+// 	CommentCount    int64  `json:"comment_count"`
+// 	CollectionCount int64  `json:"collection_count"`
+// 	UpvoteCount     int64  `json:"upvote_count"`
+// 	IsTop           int    `json:"is_top"`
+// 	IsEssence       int    `json:"is_essence"`
+// 	IsLock          int    `json:"is_lock"`
+// 	LatestRepliedOn int64  `json:"latest_replied_on"`
+// 	CreatedOn       int64  `json:"created_on"`
+// 	ModifiedOn      int64  `json:"modified_on"`
+// 	AttachmentPrice int64  `json:"attachment_price"`
+// 	IPLoc           string `json:"ip_loc"`
+// }
 
 // func TestSearch(t *testing.T) {
 // 	configuration := Manticoresearch.NewConfiguration()
