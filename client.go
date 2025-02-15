@@ -19,8 +19,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/url"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -246,7 +248,7 @@ func parameterToJson(obj interface{}) (string, error) {
 }
 
 // callAPI do the request.
-func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response, err error) {
+func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error) {
 	// if c.cfg.Debug {
 	// 	dump, err := httputil.DumpRequestOut(request, true)
 	// 	if err != nil {
@@ -254,8 +256,16 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response,
 	// 	}
 	// 	log.Printf("\n%s\n", string(dump))
 	// }
+	if c.cfg.Debug{
+		log.Printf("callAPI req:\n%v\n",request.String())
+	}
+	resp := &fasthttp.Response{}
 
-	err = c.cfg.HTTPClient.Do(request,resp)
+
+	err := c.cfg.HTTPClient.Do(request,resp)
+	if c.cfg.Debug {
+		log.Printf("callApi resp\n%v\n",resp.String())
+	}
 	if err != nil {
 		return resp, err
 	}
@@ -267,7 +277,7 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response,
 	// 	}
 	// 	log.Printf("\n%s\n", string(dump))
 	// }
-	return resp, err
+	return resp, nil
 }
 
 // Allow modification of underlying config for alternate implementations and testing
@@ -545,75 +555,75 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 
 // detectContentType method is used to figure out `Request.Body` content type for request header
 
-// func detectContentType(body interface{}) string {
-// 	contentType := "text/plain; charset=utf-8"
-// 	kind := reflect.TypeOf(body).Kind()
+func detectContentType(body interface{}) string {
+	contentType := "text/plain; charset=utf-8"
+	kind := reflect.TypeOf(body).Kind()
 
-// 	switch kind {
-// 	case reflect.Struct, reflect.Map, reflect.Ptr:
-// 		contentType = "application/json; charset=utf-8"
-// 	case reflect.String:
-// 		contentType = "text/plain; charset=utf-8"
-// 	default:
-// 		if b, ok := body.([]byte); ok {
-// 			contentType = http.DetectContentType(b)
-// 		} else if kind == reflect.Slice {
-// 			contentType = "application/json; charset=utf-8"
-// 		}
-// 	}
+	switch kind {
+	case reflect.Struct, reflect.Map, reflect.Ptr:
+		contentType = "application/json; charset=utf-8"
+	case reflect.String:
+		contentType = "text/plain; charset=utf-8"
+	default:
+		if b, ok := body.([]byte); ok {
+			contentType = http.DetectContentType(b)
+		} else if kind == reflect.Slice {
+			contentType = "application/json; charset=utf-8"
+		}
+	}
 
-// 	return contentType
-// }
+	return contentType
+}
 
 // Ripped from https://github.com/gregjones/httpcache/blob/master/httpcache.go
 type cacheControl map[string]string
 
-// func parseCacheControl(headers http.Header) cacheControl {
-// 	cc := cacheControl{}
-// 	ccHeader := headers.Get("Cache-Control")
-// 	for _, part := range strings.Split(ccHeader, ",") {
-// 		part = strings.Trim(part, " ")
-// 		if part == "" {
-// 			continue
-// 		}
-// 		if strings.ContainsRune(part, '=') {
-// 			keyval := strings.Split(part, "=")
-// 			cc[strings.Trim(keyval[0], " ")] = strings.Trim(keyval[1], ",")
-// 		} else {
-// 			cc[part] = ""
-// 		}
-// 	}
-// 	return cc
-// }
+func parseCacheControl(headers http.Header) cacheControl {
+	cc := cacheControl{}
+	ccHeader := headers.Get("Cache-Control")
+	for _, part := range strings.Split(ccHeader, ",") {
+		part = strings.Trim(part, " ")
+		if part == "" {
+			continue
+		}
+		if strings.ContainsRune(part, '=') {
+			keyval := strings.Split(part, "=")
+			cc[strings.Trim(keyval[0], " ")] = strings.Trim(keyval[1], ",")
+		} else {
+			cc[part] = ""
+		}
+	}
+	return cc
+}
 
 // // CacheExpires helper function to determine remaining time before repeating a request.
-// func CacheExpires(r *http.Response) time.Time {
-// 	// Figure out when the cache expires.
-// 	var expires time.Time
-// 	now, err := time.Parse(time.RFC1123, r.Header.Get("date"))
-// 	if err != nil {
-// 		return time.Now()
-// 	}
-// 	respCacheControl := parseCacheControl(r.Header)
+func CacheExpires(r *http.Response) time.Time {
+	// Figure out when the cache expires.
+	var expires time.Time
+	now, err := time.Parse(time.RFC1123, r.Header.Get("date"))
+	if err != nil {
+		return time.Now()
+	}
+	respCacheControl := parseCacheControl(r.Header)
 
-// 	if maxAge, ok := respCacheControl["max-age"]; ok {
-// 		lifetime, err := time.ParseDuration(maxAge + "s")
-// 		if err != nil {
-// 			expires = now
-// 		} else {
-// 			expires = now.Add(lifetime)
-// 		}
-// 	} else {
-// 		expiresHeader := r.Header.Get("Expires")
-// 		if expiresHeader != "" {
-// 			expires, err = time.Parse(time.RFC1123, expiresHeader)
-// 			if err != nil {
-// 				expires = now
-// 			}
-// 		}
-// 	}
-// 	return expires
-// }
+	if maxAge, ok := respCacheControl["max-age"]; ok {
+		lifetime, err := time.ParseDuration(maxAge + "s")
+		if err != nil {
+			expires = now
+		} else {
+			expires = now.Add(lifetime)
+		}
+	} else {
+		expiresHeader := r.Header.Get("Expires")
+		if expiresHeader != "" {
+			expires, err = time.Parse(time.RFC1123, expiresHeader)
+			if err != nil {
+				expires = now
+			}
+		}
+	}
+	return expires
+}
 
 func strlen(s string) int {
 	return utf8.RuneCountInString(s)

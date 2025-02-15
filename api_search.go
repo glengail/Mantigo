@@ -1,7 +1,7 @@
 /*
 Manticore Search Client
 
-Сlient for Manticore Search. 
+Сlient for Manticore Search.
 
 API version: 5.0.0
 Contact: info@manticoresearch.com
@@ -14,11 +14,12 @@ package openapi
 import (
 	"context"
 	"io"
-	"github.com/valyala/fasthttp"
+	//"log"
 	"net/url"
 	"strings"
-)
 
+	"github.com/valyala/fasthttp"
+)
 
 // SearchAPIService SearchAPI service
 type SearchAPIService service
@@ -470,8 +471,10 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
-	localVarHTTPResponse.CloseBodyStream()
+	//localVarBody, err := io.ReadAll(localVarHTTPResponse.BodyStream())
+	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
+	copy(localVarBody, localVarHTTPResponse.Body())
+
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {

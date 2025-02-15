@@ -88,6 +88,7 @@ type postInfo struct {
 
 func TestSearch(t *testing.T) {
 	configuration := Manticoresearch.NewConfiguration()
+	configuration.Debug = true
 	configuration.Servers[0].URL = "http://192.168.1.17:9308"
 
 	apiClient := Manticoresearch.NewAPIClient(configuration)
@@ -103,15 +104,16 @@ func TestSearch(t *testing.T) {
 	resp, resp1, err := apiClient.SearchAPI.Search(context.Background()).SearchRequest(*req).Execute()
 	if err != nil {
 		fmt.Printf("Search error: %s\n", err)
-	} else {
-		if resp1 == nil {
-			t.Fatal("resp1 is nil")
-		}
-		if resp == nil {
-			t.Fatal("resp is nil")
-		}
-		fmt.Printf("Search result: %+v \n%+v\n", resp, resp1)
 	}
+	fmt.Printf("Search resp: %+v \n", resp)
+	localVarBody := make([]byte, len(resp1.Body()))
+	copy(localVarBody, resp1.Body())
+	fmt.Printf("Search resp1.body: %+v \n", string(localVarBody))
+	if resp == nil {
+		t.Fatal("resp is nil")
+	}
+
+	fmt.Printf("Search result: %+v \n%+v\n", resp, resp1)
 	posts := make([]*postInfo, 0, len(resp.Hits.Hits))
 	for _, hit := range resp.Hits.Hits {
 		fmt.Printf("hit: %v\n", hit)
