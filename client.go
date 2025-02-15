@@ -248,7 +248,7 @@ func parameterToJson(obj interface{}) (string, error) {
 }
 
 // callAPI do the request.
-func (c *APIClient) callAPI(ctx context.Context,request *fasthttp.Request) (*fasthttp.Response,error) {
+func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response,err error) {
 	// if c.cfg.Debug {
 	// 	dump, err := httputil.DumpRequestOut(request, true)
 	// 	if err != nil {
@@ -259,17 +259,13 @@ func (c *APIClient) callAPI(ctx context.Context,request *fasthttp.Request) (*fas
 	if c.cfg.Debug{
 		log.Printf("callAPI req:\n%v\n",request.String())
 	}
-	resp := fasthttp.AcquireResponse()
-	go func ()  {
-		<-ctx.Done()
-		fasthttp.ReleaseResponse(resp)
-	}()
+	r := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(r)
 
-	err := c.cfg.HTTPClient.Do(request,resp)
-	// if c.cfg.Debug {
-	// 	log.Printf("resp.Header.Header(): %v\n", string(resp.Header.Header()))
-	// 	log.Printf("callApi resp\n%v\n",resp.String())
-	// }
+	err = c.cfg.HTTPClient.Do(request,r)
+	if c.cfg.Debug {
+		log.Printf("callApi resp\n%v\n",resp.String())
+	}
 	if err != nil {
 		return resp, err
 	}
@@ -281,6 +277,7 @@ func (c *APIClient) callAPI(ctx context.Context,request *fasthttp.Request) (*fas
 	// 	}
 	// 	log.Printf("\n%s\n", string(dump))
 	// }
+	r.CopyTo(resp)
 	return resp, nil
 }
 

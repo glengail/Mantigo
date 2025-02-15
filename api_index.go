@@ -130,7 +130,7 @@ func (a *IndexAPIService) BulkExecute(r ApiBulkRequest) (*BulkResponse, *fasthtt
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r.ctx,req)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 
 
 	if err != nil || localVarHTTPResponse == nil {
