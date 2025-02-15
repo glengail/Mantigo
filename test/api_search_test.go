@@ -86,62 +86,62 @@ type postInfo struct {
 	IPLoc           string `json:"ip_loc"`
 }
 
-func TestSearch(t *testing.T) {
-	configuration := Manticoresearch.NewConfiguration()
-	configuration.Debug = true
-	configuration.Servers[0].URL = "http://192.168.1.17:9308"
+// func TestSearch(t *testing.T) {
+// 	configuration := Manticoresearch.NewConfiguration()
+// 	configuration.Debug = true
+// 	configuration.Servers[0].URL = "http://192.168.1.17:9308"
 
-	apiClient := Manticoresearch.NewAPIClient(configuration)
-	indexName := "paopao"
-	content := "abc"
-	req := Manticoresearch.NewSearchRequest(indexName)
-	query := Manticoresearch.SearchQuery{
-		Match: map[string]interface{}{
-			"content": content,
-		},
-	}
-	req.SetQuery(query)
-	ctx := context.Background()
-	defer ctx.Done()
-	resp, resp1, err := apiClient.SearchAPI.Search(ctx).SearchRequest(*req).Execute()
-	if err != nil {
-		fmt.Printf("Search error: %s\n", err)
-	}
-	fmt.Printf("Search resp: %+v \n", resp)
-	fmt.Printf("Search resp1: %+v \n", resp)
-	if resp == nil {
-		t.Fatal("resp is nil")
-	}
+// 	apiClient := Manticoresearch.NewAPIClient(configuration)
+// 	indexName := "paopao"
+// 	content := "abc"
+// 	req := Manticoresearch.NewSearchRequest(indexName)
+// 	query := Manticoresearch.SearchQuery{
+// 		Match: map[string]interface{}{
+// 			"content": content,
+// 		},
+// 	}
+// 	req.SetQuery(query)
+// 	ctx := context.Background()
+// 	defer ctx.Done()
+// 	resp, resp1, err := apiClient.SearchAPI.Search(ctx).SearchRequest(*req).Execute()
+// 	if err != nil {
+// 		fmt.Printf("Search error: %s\n", err)
+// 	}
+// 	fmt.Printf("Search resp: %+v \n", resp)
+// 	fmt.Printf("Search resp1: %+v \n", resp)
+// 	if resp == nil {
+// 		t.Fatal("resp is nil")
+// 	}
 
-	fmt.Printf("Search result: %+v \n%+v\n", resp, resp1)
-	posts := make([]*postInfo, 0, len(resp.Hits.Hits))
-	for _, hit := range resp.Hits.Hits {
-		fmt.Printf("hit: %v\n", hit)
-		raw, err := json.Marshal(hit["_source"])
-		if err != nil {
-			fmt.Printf("Search error: %s\n", err)
-		}
-		p := &postInfo{}
-		if err = json.Unmarshal(raw, p); err != nil {
-			return
-		}
-		posts = append(posts, &postInfo{
-			ID:              int64(hit["_id"].(float64)),
-			UserID:          p.UserID,
-			CommentCount:    p.CommentCount,
-			CollectionCount: p.CollectionCount,
-			UpvoteCount:     p.UpvoteCount,
-			IsTop:           p.IsTop,
-			IsEssence:       p.IsEssence,
-			IsLock:          p.IsLock,
-			LatestRepliedOn: p.LatestRepliedOn,
-			CreatedOn:       p.CreatedOn,
-			ModifiedOn:      p.ModifiedOn,
-			AttachmentPrice: p.AttachmentPrice,
-			IPLoc:           p.IPLoc,
-		})
-	}
-	for _, post := range posts {
-		fmt.Printf("post: %v\n", post)
-	}
-}
+// 	fmt.Printf("Search result: %+v \n%+v\n", resp, resp1)
+// 	posts := make([]*postInfo, 0, len(resp.Hits.Hits))
+// 	for _, hit := range resp.Hits.Hits {
+// 		fmt.Printf("hit: %v\n", hit)
+// 		raw, err := json.Marshal(hit["_source"])
+// 		if err != nil {
+// 			fmt.Printf("Search error: %s\n", err)
+// 		}
+// 		p := &postInfo{}
+// 		if err = json.Unmarshal(raw, p); err != nil {
+// 			return
+// 		}
+// 		posts = append(posts, &postInfo{
+// 			ID:              int64(hit["_id"].(float64)),
+// 			UserID:          p.UserID,
+// 			CommentCount:    p.CommentCount,
+// 			CollectionCount: p.CollectionCount,
+// 			UpvoteCount:     p.UpvoteCount,
+// 			IsTop:           p.IsTop,
+// 			IsEssence:       p.IsEssence,
+// 			IsLock:          p.IsLock,
+// 			LatestRepliedOn: p.LatestRepliedOn,
+// 			CreatedOn:       p.CreatedOn,
+// 			ModifiedOn:      p.ModifiedOn,
+// 			AttachmentPrice: p.AttachmentPrice,
+// 			IPLoc:           p.IPLoc,
+// 		})
+// 	}
+// 	for _, post := range posts {
+// 		fmt.Printf("post: %v\n", post)
+// 	}
+// }
