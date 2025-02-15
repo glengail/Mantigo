@@ -248,7 +248,7 @@ func parameterToJson(obj interface{}) (string, error) {
 }
 
 // callAPI do the request.
-func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response,err error) {
+func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error) {
 	// if c.cfg.Debug {
 	// 	dump, err := httputil.DumpRequestOut(request, true)
 	// 	if err != nil {
@@ -262,12 +262,12 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response,
 	r := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(r)
 
-	err = c.cfg.HTTPClient.Do(request,r)
+	err := c.cfg.HTTPClient.Do(request,r)
 	if c.cfg.Debug {
-		log.Printf("callApi resp\n%v\n",resp.String())
+		log.Printf("callApi resp\n%v\n",r.String())
 	}
 	if err != nil {
-		return resp, err
+		return nil, err
 	}
 
 	// if c.cfg.Debug {
@@ -277,6 +277,7 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (resp *fasthttp.Response,
 	// 	}
 	// 	log.Printf("\n%s\n", string(dump))
 	// }
+	resp := fasthttp.AcquireResponse()
 	r.CopyTo(resp)
 	return resp, nil
 }
