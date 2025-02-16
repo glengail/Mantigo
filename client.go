@@ -67,6 +67,14 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	if cfg.HTTPClient == nil {
 		cfg.HTTPClient = &fasthttp.Client{
 			StreamResponseBody: true,
+			RetryIfErr: func(request *fasthttp.Request, attempts int, err error) (resetTimeout bool, retry bool) {
+				isIdempotent := request.Header.IsGet() || request.Header.IsHead() || request.Header.IsPut()
+				retry = true
+				if !isIdempotent && err != io.EOF {
+					retry = false
+				}
+				return
+			},
 		}
 	}
 
