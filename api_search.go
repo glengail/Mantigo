@@ -149,9 +149,11 @@ func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[
 		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
-
-	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
-	copy(localVarBody, localVarHTTPResponse.Body())
+	stream := localVarHTTPResponse.BodyStream()
+	localVarBody,err := io.ReadAll(stream)
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -321,9 +323,11 @@ func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchRespo
 		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
-
-	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
-	copy(localVarBody, localVarHTTPResponse.Body())
+	stream := localVarHTTPResponse.BodyStream()
+	localVarBody,err := io.ReadAll(stream)
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
