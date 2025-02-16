@@ -65,12 +65,15 @@ type service struct {
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(cfg *Configuration) *APIClient {
 	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = &fasthttp.Client{}
+		cfg.HTTPClient = &fasthttp.Client{
+			StreamResponseBody: true,
+		}
 	}
 
 	c := &APIClient{}
 	c.cfg = cfg
 	c.common.client = c
+	c.cfg.Debug=false
 
 	// API Services
 	c.IndexAPI = (*IndexAPIService)(&c.common)
@@ -263,10 +266,16 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error
 	//defer fasthttp.ReleaseResponse(r)
 
 	err := c.cfg.HTTPClient.Do(request,r)
+	fasthttp.ReleaseRequest(request)
+	// stream := r.BodyStream()
+	// if stream != nil {
+	// 	log.Printf("2stream is not nil")
+	// }
 	//fasthttp.ReleaseRequest(request)
-	if c.cfg.Debug {
-		log.Printf("callApi resp\n%v\n",r.String())
-	}
+
+	// if c.cfg.Debug {
+	// 	log.Printf("callApi resp\n%v\n",r.String())
+	// }
 	if err != nil {
 		return r, err
 	}

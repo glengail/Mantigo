@@ -102,7 +102,7 @@ func TestSearch(t *testing.T) {
 	}
 	req.SetQuery(query)
 	ctx := context.Background()
-	defer ctx.Done()
+	//defer ctx.Done()
 	resp, _, err := apiClient.SearchAPI.Search(ctx).SearchRequest(*req).Execute()
 	if err != nil {
 		fmt.Printf("Search error: %s\n", err)

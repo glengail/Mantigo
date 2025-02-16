@@ -13,6 +13,7 @@ package openapi
 
 import (
 	"context"
+	"io"
 
 	//"log"
 	"net/url"
@@ -468,16 +469,21 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
-	resp, err := a.client.callAPI(req)
-	//defer fasthttp.ReleaseResponse(localVarHTTPResponse)
-	if err != nil || resp == nil {
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	if err != nil || localVarHTTPResponse == nil {
 		
-		return localVarReturnValue, resp, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
-	localVarHTTPResponse := &fasthttp.Response{}
-	resp.CopyTo(localVarHTTPResponse)
-	localVarBody := make([]byte,len(resp.Body()))
-	copy(localVarBody, resp.Body())
+	stream := localVarHTTPResponse.BodyStream()
+	localVarBody,err := io.ReadAll(stream)
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+	// resp.CopyTo(localVarHTTPResponse)
+	// localVarBody := make([]byte,len(resp.Body()))
+	// copy(localVarBody, resp.Body())
+	
 	//localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
