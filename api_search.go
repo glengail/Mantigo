@@ -143,11 +143,14 @@ func (a *SearchAPIService) AutocompleteExecute(r ApiAutocompleteRequest) ([]map[
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
+		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody := localVarHTTPResponse.Body()
+	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
+	copy(localVarBody, localVarHTTPResponse.Body())
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -312,12 +315,14 @@ func (a *SearchAPIService) PercolateExecute(r ApiPercolateRequest) (*SearchRespo
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
-
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
+		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody := localVarHTTPResponse.Body()
+	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
+	copy(localVarBody, localVarHTTPResponse.Body())
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	// if err != nil {
@@ -464,12 +469,14 @@ func (a *SearchAPIService) SearchExecute(r ApiSearchRequest) (*SearchResponse, *
 		return localVarReturnValue, nil, err
 	}
 	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
 	if err != nil || localVarHTTPResponse == nil {
 		
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody := localVarHTTPResponse.Body()
+	localVarBody := make([]byte,len(localVarHTTPResponse.Body()))
+	copy(localVarBody, localVarHTTPResponse.Body())
 	//localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	// localVarHTTPResponse.Body.Close()
 	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))

@@ -260,9 +260,10 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error
 		log.Printf("callAPI req:\n%v\n",request.String())
 	}
 	r := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseResponse(r)
+	//defer fasthttp.ReleaseResponse(r)
 
 	err := c.cfg.HTTPClient.Do(request,r)
+	fasthttp.ReleaseRequest(request)
 	if c.cfg.Debug {
 		log.Printf("callApi resp\n%v\n",r.String())
 	}
@@ -277,9 +278,9 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error
 	// 	}
 	// 	log.Printf("\n%s\n", string(dump))
 	// }
-	resp := fasthttp.AcquireResponse()
-	r.CopyTo(resp)
-	return resp, nil
+	// resp := fasthttp.AcquireResponse()
+	// r.CopyTo(resp)
+	return r, nil
 }
 
 // Allow modification of underlying config for alternate implementations and testing
