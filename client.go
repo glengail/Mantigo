@@ -268,7 +268,7 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error
 		log.Printf("callApi resp\n%v\n",r.String())
 	}
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 
 	// if c.cfg.Debug {
