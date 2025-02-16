@@ -263,7 +263,7 @@ func (c *APIClient) callAPI(request *fasthttp.Request) (*fasthttp.Response,error
 	//defer fasthttp.ReleaseResponse(r)
 
 	err := c.cfg.HTTPClient.Do(request,r)
-	fasthttp.ReleaseRequest(request)
+	//fasthttp.ReleaseRequest(request)
 	if c.cfg.Debug {
 		log.Printf("callApi resp\n%v\n",r.String())
 	}
