@@ -2,7 +2,6 @@ package openapi
 
 import (
 	"bytes"
-	"encoding/json"
 )
 
 var _ MappedNullable = &DeleteDocumentsRequest{}

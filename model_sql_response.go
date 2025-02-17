@@ -12,7 +12,7 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"encoding/json"
+	
 	validator "gopkg.in/validator.v2"
 	"fmt"
 )

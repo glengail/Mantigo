@@ -12,7 +12,7 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"encoding/json"
+	
 	_"fmt"
 	_"bytes"
 	"fmt"

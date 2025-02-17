@@ -13,7 +13,7 @@ package openapi
 
 import (
 	"bytes"
-	"encoding/json"
+	jsoniter "github.com/json-iterator/go"
 	"fmt"
 	"reflect"
 	"time"
@@ -350,7 +350,7 @@ type MappedNullable interface {
 }
 
 // A wrapper for strict JSON decoding
-func newStrictDecoder(data []byte) *json.Decoder {
+func newStrictDecoder(data []byte) *jsoniter.Decoder {
 	dec := json.NewDecoder(bytes.NewBuffer(data))
 	dec.DisallowUnknownFields()
 	return dec

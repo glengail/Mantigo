@@ -12,7 +12,7 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"encoding/json"
+	
 )
 
 // checks if the QueryFilter type satisfies the MappedNullable interface at compile time

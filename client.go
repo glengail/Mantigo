@@ -14,8 +14,6 @@ package openapi
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -32,7 +30,9 @@ import (
 	"unicode/utf8"
 	"net/http"
 	"github.com/valyala/fasthttp"
+	jsoniter "github.com/json-iterator/go"
 )
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	JsonCheck       = regexp.MustCompile(`(?i:(?:application|text)/(?:[^;]+\+)?json)`)
@@ -493,7 +493,7 @@ func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err err
 		return
 	}
 	if XmlCheck.MatchString(contentType) {
-		if err = xml.Unmarshal(b, v); err != nil {
+		if err = json.Unmarshal(b, v); err != nil {
 			return err
 		}
 		return nil
@@ -556,7 +556,7 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 		err = json.NewEncoder(bodyBuf).Encode(body)
 	} else if XmlCheck.MatchString(contentType) {
 		var bs []byte
-		bs, err = xml.Marshal(body)
+		bs, err = json.Marshal(body)
 		if err == nil {
 			bodyBuf.Write(bs)
 		}

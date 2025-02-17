@@ -12,7 +12,7 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"encoding/json"
+	
 )
 
 // checks if the DeleteResponse type satisfies the MappedNullable interface at compile time

@@ -12,7 +12,7 @@ Contact: info@manticoresearch.com
 package openapi
 
 import (
-	"encoding/json"
+	
 )
 
 // checks if the BoolFilter type satisfies the MappedNullable interface at compile time
