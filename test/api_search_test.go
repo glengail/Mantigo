@@ -10,6 +10,7 @@ Testing SearchAPIService
 package openapi
 
 import (
+	//"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -142,4 +143,56 @@ func TestSearch(t *testing.T) {
 	for _, post := range posts {
 		fmt.Printf("post: %v\n", post)
 	}
+}
+func TestAddDocuments(t *testing.T) {
+	configuration := Manticoresearch.NewConfiguration()
+	configuration.Debug = true
+	configuration.Servers[0].URL = "http://192.168.1.17:9308"
+
+	apiClient := Manticoresearch.NewAPIClient(configuration)
+	indexName := "paopao"
+	content := "abcnoejio"
+	req1 := Manticoresearch.NewInsertDocumentRequest(indexName, map[string]interface{}{
+		"Content": content,
+		"id":      2,
+	})
+	req2 := Manticoresearch.NewInsertDocumentRequest(indexName, map[string]interface{}{
+		"Content": "1234",
+		"id":      1,
+	})
+	req := Manticoresearch.NewAddDocumentsRequestWithDefaults()
+	req.AddInsertDocument(req1)
+	req.AddInsertDocument(req2)
+	resp, _, err := apiClient.IndexAPI.AddDocuments(context.Background()).AddDocumentsRequest(*req).Execute()
+	if err != nil {
+		t.Logf("resp: %v\n", resp)
+		//t.Logf("Stack Trace:%v", string(debug.Stack()))
+		t.Fatalf("AddDocuments error: %s\n", err)
+	}
+	t.Logf("resp: %v\n", resp)
+}
+
+func TestDeleteDocuments(t *testing.T) {
+	configuration := Manticoresearch.NewConfiguration()
+	configuration.Debug = true
+	configuration.Servers[0].URL = "http://192.168.1.17:9308"
+
+	apiClient := Manticoresearch.NewAPIClient(configuration)
+	indexName := "paopao"
+	// content := "abcnoejio"
+	req1 := Manticoresearch.NewDeleteDocumentRequest(indexName)
+	req1.SetId(1)
+	req2 := Manticoresearch.NewDeleteDocumentRequest(indexName)
+	req2.SetId(2)
+	req := Manticoresearch.NewDeleteDocumentsRequestWithDefaults()
+	//req.AddDeleteDocument(req1)
+	req.AddDeleteDocument(req2)
+	req.AddDeleteDocument(req1)
+	resp, _, err := apiClient.IndexAPI.DeleteDocuments(context.Background()).DeleteDocumentsRequest(*req).Execute()
+	if err != nil {
+		t.Logf("resp: %v\n", resp)
+		//t.Logf("Stack Trace:%v", string(debug.Stack()))
+		t.Fatalf("AddDocuments error: %s\n", err)
+	}
+	t.Logf("resp: %v\n", resp)
 }

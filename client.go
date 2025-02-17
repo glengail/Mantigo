@@ -22,7 +22,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/url"
-	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -31,7 +30,7 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
-
+	"net/http"
 	"github.com/valyala/fasthttp"
 )
 
@@ -553,6 +552,7 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 	} else if s, ok := body.(*string); ok {
 		_, err = bodyBuf.WriteString(*s)
 	} else if JsonCheck.MatchString(contentType) {
+		//if contentType==""
 		err = json.NewEncoder(bodyBuf).Encode(body)
 	} else if XmlCheck.MatchString(contentType) {
 		var bs []byte
@@ -598,9 +598,9 @@ func detectContentType(body interface{}) string {
 // Ripped from https://github.com/gregjones/httpcache/blob/master/httpcache.go
 type cacheControl map[string]string
 
-func parseCacheControl(headers http.Header) cacheControl {
+func parseCacheControl(headers *fasthttp.ResponseHeader) cacheControl {
 	cc := cacheControl{}
-	ccHeader := headers.Get("Cache-Control")
+	ccHeader := string(headers.Peek("Cache-Control"))
 	for _, part := range strings.Split(ccHeader, ",") {
 		part = strings.Trim(part, " ")
 		if part == "" {
@@ -617,14 +617,14 @@ func parseCacheControl(headers http.Header) cacheControl {
 }
 
 // // CacheExpires helper function to determine remaining time before repeating a request.
-func CacheExpires(r *http.Response) time.Time {
+func CacheExpires(r *fasthttp.Response) time.Time {
 	// Figure out when the cache expires.
 	var expires time.Time
-	now, err := time.Parse(time.RFC1123, r.Header.Get("date"))
+	now, err := time.Parse(time.RFC1123, string(r.Header.Peek("date")))
 	if err != nil {
 		return time.Now()
 	}
-	respCacheControl := parseCacheControl(r.Header)
+	respCacheControl := parseCacheControl(&r.Header)
 
 	if maxAge, ok := respCacheControl["max-age"]; ok {
 		lifetime, err := time.ParseDuration(maxAge + "s")
@@ -634,7 +634,7 @@ func CacheExpires(r *http.Response) time.Time {
 			expires = now.Add(lifetime)
 		}
 	} else {
-		expiresHeader := r.Header.Get("Expires")
+		expiresHeader := string(r.Header.Peek("Expires"))
 		if expiresHeader != "" {
 			expires, err = time.Parse(time.RFC1123, expiresHeader)
 			if err != nil {

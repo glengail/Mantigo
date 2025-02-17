@@ -179,6 +179,10 @@ func (o InsertDocumentRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Cluster) {
 		toSerialize["cluster"] = o.Cluster
 	}
+	if !IsNil(o.Doc["id"]){
+		toSerialize["id"] = o.Doc["id"]
+		delete(o.Doc,"id")
+	}
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id
 	}

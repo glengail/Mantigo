@@ -1,7 +1,7 @@
 /*
 Manticore Search Client
 
-Сlient for Manticore Search. 
+Сlient for Manticore Search.
 
 API version: 5.0.0
 Contact: info@manticoresearch.com
@@ -13,15 +13,246 @@ package openapi
 
 import (
 	"context"
+	"io"
 	"net/url"
 	"strings"
-	"io"
 	"github.com/valyala/fasthttp"
 )
 
-
 // IndexAPIService IndexAPI service
 type IndexAPIService service
+
+type ApiAddDucumentsRequest struct {
+	ctx context.Context
+	ApiService *IndexAPIService
+	addDocumentsRequest *AddDocumentsRequest
+}
+
+func (r ApiAddDucumentsRequest)AddDocumentsRequest(addDocumentsRequest AddDocumentsRequest) ApiAddDucumentsRequest{
+	r.addDocumentsRequest = &addDocumentsRequest
+    return r
+}
+
+func (r ApiAddDucumentsRequest)Execute()(*BulkResponse,*fasthttp.Response,error){
+	return r.ApiService.AddDocumentsExecute(r)
+}
+
+func(a *IndexAPIService) AddDocuments(ctx context.Context)ApiAddDucumentsRequest{
+	return ApiAddDucumentsRequest{
+		ctx: ctx,
+		ApiService: a,
+	}
+}
+
+func (a *IndexAPIService) AddDocumentsExecute(r ApiAddDucumentsRequest)(*BulkResponse,*fasthttp.Response,error){
+	var (
+		localVarHTTPMethod   = fasthttp.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *BulkResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IndexAPIService.Bulk")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/bulk"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.addDocumentsRequest == nil {
+		return localVarReturnValue, nil, reportError("addDocumentsRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/x-ndjson"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody,err = r.addDocumentsRequest.MarshalJSON()
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	if err != nil || localVarHTTPResponse == nil {
+		
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+	stream := localVarHTTPResponse.BodyStream()
+	localVarBody,err := io.ReadAll(stream)
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
+
+
+	if localVarHTTPResponse.StatusCode() >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
+		}
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiDeleteDucumentsRequest struct {
+	ctx context.Context
+	ApiService *IndexAPIService
+	deleteDocumentsRequest *DeleteDocumentsRequest
+}
+
+func (r ApiDeleteDucumentsRequest)DeleteDocumentsRequest(deleteDocumentsRequest DeleteDocumentsRequest) ApiDeleteDucumentsRequest{
+	r.deleteDocumentsRequest = &deleteDocumentsRequest
+    return r
+}
+
+func (r ApiDeleteDucumentsRequest)Execute()(*BulkResponse,*fasthttp.Response,error){
+	return r.ApiService.DeleteDocumentsExecute(r)
+}
+
+func(a *IndexAPIService) DeleteDocuments(ctx context.Context)ApiDeleteDucumentsRequest{
+	return ApiDeleteDucumentsRequest{
+		ctx: ctx,
+		ApiService: a,
+	}
+}
+
+func (a *IndexAPIService) DeleteDocumentsExecute(r ApiDeleteDucumentsRequest)(*BulkResponse,*fasthttp.Response,error){
+	var (
+		localVarHTTPMethod   = fasthttp.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *BulkResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IndexAPIService.Bulk")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/bulk"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.deleteDocumentsRequest == nil {
+		return localVarReturnValue, nil, reportError("deleteDocumentsRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/x-ndjson"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody,err = r.deleteDocumentsRequest.MarshalJSON()
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	defer fasthttp.ReleaseResponse(localVarHTTPResponse)
+	if err != nil || localVarHTTPResponse == nil {
+		
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+	stream := localVarHTTPResponse.BodyStream()
+	localVarBody,err := io.ReadAll(stream)
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+	// localVarHTTPResponse.Body.Close()
+	// localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	// if err != nil {
+	// 	return localVarReturnValue, localVarHTTPResponse, err
+	// }
+
+
+	if localVarHTTPResponse.StatusCode() >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: string(localVarHTTPResponse.Header.StatusMessage()),
+		}
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(string(localVarHTTPResponse.Header.StatusMessage()), &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, string(localVarHTTPResponse.Header.ContentType()))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
 
 type ApiBulkRequest struct {
 	ctx context.Context
