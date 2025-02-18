@@ -233,7 +233,10 @@ func (v NullableUpdateResponse) MarshalJSON() ([]byte, error) {
 
 func (v *NullableUpdateResponse) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 

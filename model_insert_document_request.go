@@ -223,7 +223,10 @@ func (v NullableInsertDocumentRequest) MarshalJSON() ([]byte, error) {
 
 func (v *NullableInsertDocumentRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 

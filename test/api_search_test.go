@@ -12,12 +12,13 @@ package openapi
 import (
 	//"bytes"
 	"context"
-	"encoding/json"
+
 	"fmt"
 	"strings"
 	"testing"
 
 	Manticoresearch "github.com/glengail/Mantigo"
+	jsoniter "github.com/json-iterator/go"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -44,7 +45,7 @@ func Test_openapi_SearchAPIService(t *testing.T) {
 		fmt.Printf("%+v\n\n", bulkHttpRes)
 		require.Nil(t, bulkErr)
 		require.NotNil(t, bulkResp)
-		outRes, outErr := json.Marshal(bulkResp)
+		outRes, outErr := jsoniter.Marshal(bulkResp)
 		require.Nil(t, outErr)
 		fmt.Printf("%+v\n\n", string(outRes[:]))
 		assert.Equal(t, 200, bulkHttpRes.StatusCode)
@@ -61,7 +62,7 @@ func Test_openapi_SearchAPIService(t *testing.T) {
 		fmt.Printf("%+v\n\n", httpRes)
 		require.Nil(t, err)
 		require.NotNil(t, resp)
-		outRes, outErr = json.Marshal(resp)
+		outRes, outErr = jsoniter.Marshal(resp)
 		require.Nil(t, outErr)
 		fmt.Printf("%+v\n\n", string(outRes[:]))
 		assert.Equal(t, 200, httpRes.StatusCode)
@@ -116,12 +117,12 @@ func TestSearch(t *testing.T) {
 	posts := make([]*postInfo, 0, len(resp.Hits.Hits))
 	for _, hit := range resp.Hits.Hits {
 		fmt.Printf("hit: %v\n", hit)
-		raw, err := json.Marshal(hit["_source"])
+		raw, err := jsoniter.Marshal(hit["_source"])
 		if err != nil {
 			fmt.Printf("Search error: %s\n", err)
 		}
 		p := &postInfo{}
-		if err = json.Unmarshal(raw, p); err != nil {
+		if err = jsoniter.Unmarshal(raw, p); err != nil {
 			return
 		}
 		posts = append(posts, &postInfo{

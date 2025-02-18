@@ -76,7 +76,10 @@ func (v NullableBool) MarshalJSON() ([]byte, error) {
 
 func (v *NullableBool) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableInt struct {
@@ -112,7 +115,10 @@ func (v NullableInt) MarshalJSON() ([]byte, error) {
 
 func (v *NullableInt) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableInt32 struct {
@@ -148,7 +154,10 @@ func (v NullableInt32) MarshalJSON() ([]byte, error) {
 
 func (v *NullableInt32) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableInt64 struct {
@@ -184,7 +193,10 @@ func (v NullableInt64) MarshalJSON() ([]byte, error) {
 
 func (v *NullableInt64) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableFloat32 struct {
@@ -220,7 +232,10 @@ func (v NullableFloat32) MarshalJSON() ([]byte, error) {
 
 func (v *NullableFloat32) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableFloat64 struct {
@@ -256,7 +271,10 @@ func (v NullableFloat64) MarshalJSON() ([]byte, error) {
 
 func (v *NullableFloat64) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableString struct {
@@ -292,7 +310,10 @@ func (v NullableString) MarshalJSON() ([]byte, error) {
 
 func (v *NullableString) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 type NullableTime struct {
@@ -328,7 +349,10 @@ func (v NullableTime) MarshalJSON() ([]byte, error) {
 
 func (v *NullableTime) UnmarshalJSON(src []byte) error {
 	v.isSet = true
-	return json.Unmarshal(src, &v.value)
+	iter := json.BorrowIterator(src)
+	iter.ReadVal(&v.value)
+	json.ReturnIterator(iter)
+	return nil
 }
 
 // IsNil checks if an input is nil
