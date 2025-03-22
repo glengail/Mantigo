@@ -52,7 +52,8 @@ func (o AddDocumentsRequest) MarshalJSON() ([]byte, error) {
 			return nil, err
 		}
 		obj := map[string]interface{}{
-			"insert": m,
+			//改成insert的话重复插入会失败
+			"replace": m,
 		}
 		objJson, err := json.Marshal(obj)
 		if err != nil {

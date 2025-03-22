@@ -10,12 +10,13 @@ Testing IndexAPIService
 package openapi
 
 import (
-	"fmt"
 	"context"
+	"fmt"
+	"testing"
+
+	Manticoresearch "github.com/glengail/Mantigo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	Manticoresearch "github.com/manticoresoftware/manticoresearch-go"
 )
 
 func Test_openapi_IndexAPIService(t *testing.T) {
@@ -30,11 +31,11 @@ func Test_openapi_IndexAPIService(t *testing.T) {
 		apiClient.UtilsAPI.Sql(context.Background()).Body(sql).RawResponse(true).Execute()
 		sql = "CREATE TABLE IF NOT EXISTS test(title text)"
 		apiClient.UtilsAPI.Sql(context.Background()).Body(sql).RawResponse(true).Execute()
-		
-		indexDoc := map[string]interface{} {"title": "Test title"}
+
+		indexDoc := map[string]interface{}{"title": "Test title"}
 		indexReq := Manticoresearch.NewInsertDocumentRequest("test", indexDoc)
 		indexReq.SetId(1)
-		resp, httpRes, err := apiClient.IndexAPI.Insert(context.Background()).InsertDocumentRequest(*indexReq).Execute();
+		resp, httpRes, err := apiClient.IndexAPI.Insert(context.Background()).InsertDocumentRequest(*indexReq).Execute()
 		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
@@ -42,6 +43,27 @@ func Test_openapi_IndexAPIService(t *testing.T) {
 		sql = "DROP TABLE IF EXISTS test"
 		apiClient.UtilsAPI.Sql(context.Background()).Body(sql).RawResponse(true).Execute()
 
-		fmt.Println("Index tests finished");
+		fmt.Println("Index tests finished")
+	})
+}
+
+func TestReplace(t *testing.T) {
+	configuration := Manticoresearch.NewConfiguration()
+	configuration.Servers[0].URL = "http://www.glengail.site:9310"
+	apiClient := Manticoresearch.NewAPIClient(configuration)
+	t.Run("Test IndexAPIService Replace", func(t *testing.T) {
+		tableName := "paopao"
+		reqs := Manticoresearch.NewAddDocumentsRequestWithDefaults()
+		req := &Manticoresearch.InsertDocumentRequest{
+			Table: tableName,
+			Doc: map[string]interface{}{
+				//"id":         "1080017990",
+				"visibility": 80,
+			},
+		}
+		req.SetId(1080017987)
+		reqs.AddInsertDocument(req)
+		_, _, err := apiClient.IndexAPI.AddDocuments(context.Background()).AddDocumentsRequest(*reqs).Execute()
+		require.Nil(t, err)
 	})
 }
